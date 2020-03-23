@@ -26,6 +26,10 @@ executable Pascal
                      , Pascal.Base
                      , Pascal.Wrapper
                      , Pascal.EvalStatement
+                     , Pascal.EvalRExp
+                     , Pascal.EvalBExp
+                     , Pascal.EvalVal
+                     , Pascal.Scope
   -- other-extensions:    
   build-depends:       base >=4.7
                       , bytestring

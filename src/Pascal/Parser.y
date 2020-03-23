@@ -36,13 +36,14 @@ import Pascal.Lexer
         'program'       { Token _ (TokenK "program") }
         'begin'         { Token _ (TokenK "begin") }
         'end'           { Token _ (TokenK "end")  }
-        'and'           { Token _ (TokenK "and") }
-        'or'            { Token _ (TokenK "or") }
-        'not'           { Token _ (TokenK "not") }
+        'and'           { Token _ (TokenOp "and") }
+        'or'            { Token _ (TokenOp "or") }
+        'not'           { Token _ (TokenOp "not") }
         'writeln'       { Token _ (TokenK "writeln") }
 
 -- associativity of operators in reverse precedence order
 %nonassoc '>' '>=' '<' '<=' '=' '<>'
+%left 'and' 'or' 
 %left '+' '-'
 %left '*' '/'
 %nonassoc ':='
@@ -76,8 +77,8 @@ Statements :: {[Statement]}
     | Statement Statements { $1:$2 } -- put statement as first element of statements
 
 Statement :: {Statement}
-    : ID ':=' RExp { Assign $1 (FloatExp $3) }
-    | ID ':=' BExp { Assign $1 (BoolExp $3) }
+    : ID ':=' RExp ';'{ Assign $1 (FloatExp $3) }
+    | ID ':=' BExp ';'{ Assign $1 (BoolExp $3) }
     | 'writeln' '(' Vals ')' ';' { Writeln $3 }
 
 

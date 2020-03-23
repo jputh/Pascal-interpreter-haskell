@@ -38,14 +38,14 @@ $alpha = [a-zA-Z]               -- alphabetic characters
 tokens :-
   $white+                                   ; -- remove multiple white-spaces
   "//".*                                    ; -- skip one line comments
-  1-9 [$digit]* "." [$digit]+               { tok_read     TokenReal }
-  true|false                                { tok_read      TokenBool}
+  $digit+ "." $digit+                       { tok_read     TokenReal }
+  True|False                                { tok_read      TokenBool}
   "'" [$alpha $digit \ ]* "'"               { tok_string   TokenStr }
-  [\+]|[\-]|[\*]|[\/]                       { tok_read     TokenOp }
+  [\+]|[\-]|[\*]|[\/]                       { tok_string     TokenOp }
   [\=]|[\<>]|[\>]|[\<]|[\>=]|[\<=]          { tok_string     TokenOp }
-  [\(]|[\)]|[\;]|[\,]                       { tok_string     TokenK }
+  [\(]|[\)]|[\;]|[\,]|[\.]                  { tok_string     TokenK }
   begin|end                                 { tok_string     TokenK }
-  and|or|not                                { tok_string     TokenK }
+  and|or|not                                { tok_string     TokenOp }
   program|writeln                           { tok_string     TokenK }
   [:=]                                      { tok_read     TokenOp }
   $alpha [$alpha $digit \_ \']*             { tok_string   TokenID }
@@ -68,11 +68,11 @@ tokenToPosN (Token p _) = p
 
 -- TODO: Add your own token types here
 data TokenClass
- = TokenOp     String
- | TokenK      String
- | TokenBool      Bool
+ = TokenBool      Bool
  | TokenReal    Float
  | TokenStr    String
+ | TokenOp     String
+ | TokenK      String
  | TokenID    String
  | TokenEOF
  deriving (Eq, Show)
