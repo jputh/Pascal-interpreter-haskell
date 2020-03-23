@@ -38,12 +38,15 @@ $alpha = [a-zA-Z]               -- alphabetic characters
 tokens :-
   $white+                                   ; -- remove multiple white-spaces
   "//".*                                    ; -- skip one line comments
-  $digit+                                   { tok_read     TokenInt }
-  "'" [$alpha $digit \ ]* "'"                                { tok_string   TokenStr }
-  [\+]|[\-]|[\*]|[\/]|[=]                   { tok_read     TokenOp }
+  1-9 [$digit]* "." [$digit]+               { tok_read     TokenReal }
+  true|false                                { tok_read      TokenBool}
+  "'" [$alpha $digit \ ]* "'"               { tok_string   TokenStr }
+  [\+]|[\-]|[\*]|[\/]                       { tok_read     TokenOp }
+  [\=]|[\<>]|[\>]|[\<]|[\>=]|[\<=]          { tok_string     TokenOp }
   [\(]|[\)]|[\;]|[\,]                       { tok_string     TokenK }
-  begin|end|true|false                      { tok_string     TokenK }
-  program|writeln|readln                    { tok_string     TokenK }
+  begin|end                                 { tok_string     TokenK }
+  and|or|not                                { tok_string     TokenK }
+  program|writeln                           { tok_string     TokenK }
   [:=]                                      { tok_read     TokenOp }
   $alpha [$alpha $digit \_ \']*             { tok_string   TokenID }
 
@@ -67,7 +70,8 @@ tokenToPosN (Token p _) = p
 data TokenClass
  = TokenOp     String
  | TokenK      String
- | TokenInt    Int
+ | TokenBool      Bool
+ | TokenReal    Float
  | TokenStr    String
  | TokenID    String
  | TokenEOF

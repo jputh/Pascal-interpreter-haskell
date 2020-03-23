@@ -14,7 +14,8 @@ import Pascal.Lexer
 %lexer { lexer } { Token _ TokenEOF }
 
 %token
-        int             { Token _ (TokenInt $$) }
+        float           { Token _ (TokenReal $$) }
+        bool            { Token _ (TokenBool $$) }
         ID              { Token _ (TokenID $$)  }
         string          { Token _ (TokenStr $$) }
         '+'             { Token _ (TokenOp "+")   }
@@ -22,6 +23,12 @@ import Pascal.Lexer
         '*'             { Token _ (TokenOp "*")   }
         '/'             { Token _ (TokenOp "/")   }
         '='             { Token _ (TokenOp "=")   }
+        '<>'            { Token _ (TokenOp "<>")  }
+        '>'             { Token _ (TokenOp ">")  }
+        '<'             { Token _ (TokenOp "<")  }
+        '<='            { Token _ (TokenOp "<=")  }
+        '>='            { Token _ (TokenOp ">=")  }
+        ':='            { Token _ (TokenOp ":=")   }
         '('             { Token _ (TokenK  "(")   }
         ')'             { Token _ (TokenK  ")")   }
         ';'             { Token _  (TokenK ";")   }
@@ -29,15 +36,13 @@ import Pascal.Lexer
         'program'       { Token _ (TokenK "program") }
         'begin'         { Token _ (TokenK "begin") }
         'end'           { Token _ (TokenK "end")  }
-        ':='            { Token _ (TokenK ":=")   }
-        'true'          { Token _ (TokenK "true") }
-        'false'         { Token _ (TokenK "false") }
         'and'           { Token _ (TokenK "and") }
+        'or'            { Token _ (TokenK "or") }
         'not'           { Token _ (TokenK "not") }
         'writeln'       { Token _ (TokenK "writeln") }
 
 -- associativity of operators in reverse precedence order
-%nonassoc '>' '>=' '<' '<=' '==' '!='
+%nonassoc '>' '>=' '<' '<=' '=' '<>'
 %left '+' '-'
 %left '*' '/'
 %nonassoc ':='
@@ -47,32 +52,45 @@ import Pascal.Lexer
 Program :: {Program}
     : 'program' 'begin' Statements 'end' { $3 }
 
--- Expressions
-Exp :: {Exp}
-    : '+' Exp { $2 } -- ignore Plus
-    | '-' Exp { Op1 "-" $2}
-    | Exp '+' Exp { Op2 "+" $1 $3 }
-    | Exp '*' Exp { Op2 "*" $1 $3 }
-    | '(' Exp ')' { $2 } -- ignore brackets
 
-BoolExp :: {BoolExp}
-    : 'true' { True_C }
-    | 'false' { False_C }
-    | 'not' BoolExp { Not $2 }
-    | BoolExp 'and' BoolExp { OpB "and" $1 $3 }
+
+-- Expressions
+RExp :: {RExp}
+    : '+' RExp { $2 } -- ignore Plus
+    | '-' RExp { Op1 "-" $2}
+    | RExp '*' RExp { Op2 "*" $1 $3 }
+    | RExp '/' RExp { Op2 "/" $1 $3 }
+    | RExp '+' RExp { Op2 "+" $1 $3 }
+    | RExp '-' RExp { Op2 "-" $1 $3 }
+    | '(' RExp ')' { $2 } -- ignore brackets
+    | float { Real $1 }
+
+BExp :: {BExp}
+    : bool { Boolean $1 }
+    | 'not' BExp { Not $2 }
+    | BExp 'and' BExp { OpB "and" $1 $3 }
+    | BExp 'or' BExp { OpB "or" $1 $3 }
 
 Statements :: {[Statement]}
     : { [] } -- nothing; make empty list
     | Statement Statements { $1:$2 } -- put statement as first element of statements
 
 Statement :: {Statement}
-    : ID ':=' Exp { Assign $1 $3 }
-    | 'writeln' '(' StringList ')' ';' { Writeln $3 }
+    : ID ':=' RExp { Assign $1 (FloatExp $3) }
+    | ID ':=' BExp { Assign $1 (BoolExp $3) }
+    | 'writeln' '(' Vals ')' ';' { Writeln $3 }
 
-StringList :: {[String]}
+
+-- helpers for writeln
+Val :: {Val}
+    : RExp { GExp (FloatExp $1) }
+    | BExp { GExp (BoolExp $1) }
+    | string { Val_S $1 }
+
+Vals :: {[Val]}
     : {[]} --nothing
-    | string { [$1] }
-    | StringList { $1 }
-    | string ',' StringList { $1:$3 }
+    | Val { [$1] }
+    | Vals { $1 }
+    | Val ',' Vals { $1:$3 }
 
 {}

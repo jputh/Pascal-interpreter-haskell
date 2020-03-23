@@ -1,9 +1,9 @@
 import Test.Hspec
 import Test.QuickCheck
 import Control.Exception (evaluate)
-import Data
-import EvalStatement
-import Interpret
+import Pascal.Data
+import Pascal.EvalStatement
+import Pascal.Interpret
 
 main :: IO ()
 main = hspec $ do
