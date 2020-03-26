@@ -4,13 +4,14 @@ import Pascal.Data
 import Pascal.EvalRExp
 import Pascal.EvalBExp
 
-evalVal :: SymTab -> String -> Val -> String
+evalVal :: (String, SymTab) -> Val -> (String, SymTab)
 -- Real expression
-evalVal st str (GExp (FloatExp r)) =
+evalVal (str, st) (GExp (FloatExp r)) =
     let 
         ((FloatExp (Real r')), st') = evalRExp r st
     in 
-        str ++ (show r')
+        (str ++ (show r'), st')
+        
 
 -- evalRExp (Op1 "-" r) st = 
 --     let 
@@ -19,14 +20,15 @@ evalVal st str (GExp (FloatExp r)) =
 --         ((FloatExp (Real (r' * (-1)))), st')
 
 -- Bool expression
-evalVal  st str (GExp (BoolExp b)) =
+evalVal  (str, st) (GExp (BoolExp b)) =
     let 
         ((BoolExp (Boolean b')), st') = evalBExp b st
     in
-        str ++ (show b')
+        (str ++ (show b'), st)
 
 -- String
-evalVal st str (Val_S s) = str ++ (removeQuote s)
+evalVal (str, st) (Val_S s) = (str ++ (removeQuote s), st)
+
 
 
 

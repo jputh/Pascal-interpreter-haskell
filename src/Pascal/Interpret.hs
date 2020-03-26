@@ -31,7 +31,13 @@ scopeStack = [mySymbTab]
 
 interpret :: Program -> String
 -- TODO: write the interpreter
-interpret states = concat (map evalStatementOut' states)
-    where evalStatementOut' = evalStatementOut mySymbTab ""
+-- interpret states = concat (map evalStatementOut' states)
+--     where evalStatementOut' = evalStatementOut st ""
+
+interpret states = 
+    let 
+        (str', st') = foldl evalStatementOut ("", mySymbTab) states
+    in
+        str'
 
 interpret _ = "Not implemented"

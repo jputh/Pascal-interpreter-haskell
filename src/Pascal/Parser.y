@@ -18,6 +18,7 @@ import Pascal.Lexer
         bool            { Token _ (TokenBool $$) }
         ID              { Token _ (TokenID $$)  }
         string          { Token _ (TokenStr $$) }
+        ':='            { Token _ (TokenOp ":=")   }
         '+'             { Token _ (TokenOp "+")   }
         '-'             { Token _ (TokenOp "-")   }
         '*'             { Token _ (TokenOp "*")   }
@@ -28,7 +29,6 @@ import Pascal.Lexer
         '<'             { Token _ (TokenOp "<")  }
         '<='            { Token _ (TokenOp "<=")  }
         '>='            { Token _ (TokenOp ">=")  }
-        ':='            { Token _ (TokenOp ":=")   }
         '('             { Token _ (TokenK  "(")   }
         ')'             { Token _ (TokenK  ")")   }
         ';'             { Token _  (TokenK ";")   }
@@ -65,6 +65,7 @@ RExp :: {RExp}
     | RExp '-' RExp { Op2 "-" $1 $3 }
     | '(' RExp ')' { $2 } -- ignore brackets
     | float { Real $1 }
+    | ID { Var $1 }
 
 BExp :: {BExp}
     : bool { Boolean $1 }

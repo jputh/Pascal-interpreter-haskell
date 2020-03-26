@@ -19,7 +19,7 @@ evalState (Assign x (FloatExp y)) st str =
     let ((FloatExp y'), st') = evalRExp y st
         st'' = addSymbol x (FloatExp y') st'
     in
-        (((FloatExp y'), st''), str)
+        (((FloatExp y'), st''), str ++ "symbol " ++ x ++ " added!")
 
 evalState (Assign x (BoolExp y)) st str = 
     let ((BoolExp y'), st') = evalBExp y st
@@ -30,14 +30,20 @@ evalState (Assign x (BoolExp y)) st str =
 
 -- writeln and any other function that outputs a string (but i dont think there is one)
 -- should be matched by evalStatementOut.
-evalStatementOut :: SymTab -> String -> Statement -> String --((GenExp, SymTab), String)
-evalStatementOut st str (Writeln vals) = concat (map evalVal' vals)
-    where evalVal' = evalVal st str 
+evalStatementOut :: (String, SymTab) -> Statement -> (String, SymTab) --((GenExp, SymTab), String)
+evalStatementOut (str, st) (Writeln vals) = 
+    let 
+        (str', st') = foldl evalVal (str, st) vals
+    in 
+        (str', st')
 -- last pattern to match; calls evalState
-evalStatementOut st str  statement= 
-    let ((g,st), str') = evalState statement st str
-    in str'
+evalStatementOut (str, st)  statement = 
+    let 
+        ((g, st'), str') = evalState statement st str
+    in 
+        (str', st')
 
 
---helper function to convert 
+--helper function to extract strings writeln
+-- extractStr :: (String)
 

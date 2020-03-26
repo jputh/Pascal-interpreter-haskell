@@ -29,6 +29,6 @@ evalRExp (Real r) st = ((FloatExp (Real r)), st)
 -- string, aka table lookup 
 evalRExp (Var str) st = 
     case lookup str (M.toList st) of
-        Just v -> (v, st)
-        Nothing -> error $ "Undefined variable " ++ str
+        Just (FloatExp (Real v)) -> ((FloatExp (Real v)), st)
+        Nothing -> error $ "Float exp lookup failed of " ++ str
 

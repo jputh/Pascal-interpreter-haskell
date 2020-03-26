@@ -49,5 +49,5 @@ evalBExp (Boolean b) st =
 -- variable, aka symbol table lookup
 evalBExp (Var_B str) st = 
     case lookup str (M.toList st) of
-        Just v -> (v, st)
-        Nothing -> error $ "Undefined variable " ++ str
+        Just (BoolExp (Boolean v)) -> ((BoolExp (Boolean v)), st)
+        Nothing -> error $ "Boolean exp lookup failed of " ++ str
