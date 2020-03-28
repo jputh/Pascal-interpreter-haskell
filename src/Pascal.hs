@@ -9,5 +9,9 @@ module Pascal
 import           Pascal.Data
 import           Pascal.Wrapper
 import           Pascal.Interpret
+import           Pascal.Scope 
+import           Pascal.EvalRExp
+import           Pascal.EvalBExp
+import           Pascal.EvalVal
 ----------------------------------------------------------------------------
 

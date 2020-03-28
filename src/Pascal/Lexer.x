@@ -43,11 +43,14 @@ tokens :-
   "'" [$alpha $digit \ ]* "'"               { tok_string   TokenStr }
   \:=                                      { tok_string     TokenOp }
   [\+]|[\-]|[\*]|[\/]                       { tok_string     TokenOp }
+  and|or|not                                { tok_string     TokenOp }
   [\=]|[\<>]|[\>]|[\<]|[\>=]|[\<=]          { tok_string     TokenOp }
   [\(]|[\)]|[\;]|[\,]|[\.]                  { tok_string     TokenK }
+  [\:]|[\.]                  { tok_string     TokenK }
   begin|end                                 { tok_string     TokenK }
-  and|or|not                                { tok_string     TokenOp }
   program|writeln                           { tok_string     TokenK }
+  real|boolean                              { tok_string     TokenK }
+  var                              { tok_string     TokenK }
   $alpha [$alpha $digit \_ \']*             { tok_string   TokenID }
 
 {

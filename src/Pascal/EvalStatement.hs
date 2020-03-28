@@ -2,7 +2,7 @@ module Pascal.EvalStatement where
     --evaluator for statement data type
     
 import Pascal.Data
-import Pascal.Scope 
+import Pascal.EvalVar 
 import Pascal.EvalRExp
 import Pascal.EvalBExp
 import Pascal.EvalVal

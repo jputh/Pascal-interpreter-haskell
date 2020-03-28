@@ -1,6 +1,7 @@
 module Pascal.EvalRExp where
 
 import Pascal.Data
+import Pascal.Scope
 import qualified Data.Map.Strict as M
 
 evalRExp :: RExp -> SymTab -> (GenExp, SymTab)
@@ -27,8 +28,26 @@ evalRExp (Op2 op r1 r2) st =
 evalRExp (Real r) st = ((FloatExp (Real r)), st)
 
 -- string, aka table lookup 
-evalRExp (Var str) st = 
-    case lookup str (M.toList st) of
-        Just (FloatExp (Real v)) -> ((FloatExp (Real v)), st)
-        Nothing -> error $ "Float exp lookup failed of " ++ str
+evalRExp (Var_R str) st = 
+    case lookupT str st of
+        ((FloatExp f), st') -> ((FloatExp f), st')
+        _ -> error $ "No real value defined of variable " ++ str
+    -- let
+    --     ((FloatExp f), st') = lookupT str st
+    -- in
+    --     ((FloatExp f), st')
 
+
+
+
+    
+    -- case lookup str (M.toList st) of
+    --     Just (FloatExp (Real v)) -> ((FloatExp (Real v)), st)
+    --     Nothing -> error $ "Float exp lookup failed of " ++ str
+
+
+-- evalBExp (Var_B str) st = 
+--     case lookup str (M.toList st) of
+--         Just (BoolExp (Boolean v)) -> ((BoolExp (Boolean v)), st)
+--         Just (FloatExp (Real v)) -> ((FloatExp (Real v)), st)
+--         Nothing -> error $ "Boolean exp lookup failed of " ++ str

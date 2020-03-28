@@ -8,6 +8,7 @@ module Pascal.Data
         Statement(..),
         GenExp(..),
         Val(..),
+        VarDec(..),
         Program,
         SymTab,
         ScopeStack
@@ -28,11 +29,11 @@ data RExp =
     -- binary operator (*,/,+,-): Op name leftExpression rightExpression
     | Op2 String RExp RExp
     -- function call: FunctionCall name ListArguments
-    | FunCall String [RExp]
+    -- | FunCall String [RExp]
     -- real value: e.g. Real 1.0
     | Real Float
     -- variable: e.g. Var "x"
-    | Var String
+    | Var_R String
     deriving (Show, Eq)
 
 -- Data-structure for boolean expressions
@@ -60,20 +61,40 @@ data Statement =
     | If BExp Statement Statement
     -- Block
     | Block [Statement]
+    deriving (Show, Eq)
 
 data Val =
-    GExp GenExp
+    Val_ID String
+    | GExp GenExp
     | Val_S String
-    -- | Val_ID String
     deriving (Show, Eq)
+
+
+data VarDec = 
+    -- Initializing a Real Expression
+    InitF String GenExp
+    -- Initializing a Boolean Expression
+    | InitB String GenExp
+    -- Declaring a Real Expression to default value
+    | DecF String
+    -- Declaring a Boolean Expression to default value
+    | DecB String
+    deriving (Show, Eq)
+
+
+
+
 
 
 -- Data-structure for whole program
 -- TODO: add declarations and other useful stuff
 -- Hint: make a tuple containing the other ingredients
-type Program = [Statement]
+type Program = ([VarDec], [Statement])
 
 --Data Structures for managing scopes:
 type SymTab = M.Map String GenExp
 
 type ScopeStack = [SymTab]
+
+
+--helper function

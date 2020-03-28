@@ -5,6 +5,7 @@ module Pascal.Interpret
 where
 
 import Pascal.Data
+import Pascal.EvalVar
 import Pascal.EvalStatement
 import qualified Data.Map.Strict as M
 
@@ -34,10 +35,13 @@ interpret :: Program -> String
 -- interpret states = concat (map evalStatementOut' states)
 --     where evalStatementOut' = evalStatementOut st ""
 
-interpret states = 
+interpret (vars, states) = 
     let 
-        (str', st') = foldl evalStatementOut ("", mySymbTab) states
+        st = foldl evalVarDec mySymbTab vars
+        (str', st') = foldl evalStatementOut ("" ++ (show st) ++ "   ", st) states
     in
         str'
+        
+        -- evalVarDec' = evalVarDec mySymbTab
 
 interpret _ = "Not implemented"

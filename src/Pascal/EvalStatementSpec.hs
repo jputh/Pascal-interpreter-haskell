@@ -2,8 +2,7 @@ import Test.Hspec
 import Test.QuickCheck
 import Control.Exception (evaluate)
 import Pascal.Data
-import Pascal.EvalStatement
-import Pascal.Interpret
+import EvalStatement
 
 main :: IO ()
 main = hspec $ do

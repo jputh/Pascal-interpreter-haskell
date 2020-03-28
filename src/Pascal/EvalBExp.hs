@@ -1,6 +1,7 @@
 module Pascal.EvalBExp where
 
 import Pascal.Data
+import Pascal.Scope
 import Pascal.EvalRExp
 import qualified Data.Map.Strict as M
 
@@ -31,11 +32,11 @@ evalBExp (Comp op r1 r2) st =
     in
         case op of
             "=" -> ((BoolExp (Boolean(r1' == r2'))), st'')
-            "<>" -> ((BoolExp (Boolean(r1' == r2'))), st'')
-            ">" -> ((BoolExp (Boolean(r1' == r2'))), st'')
-            "<" -> ((BoolExp (Boolean(r1' == r2'))), st'')
-            ">=" -> ((BoolExp (Boolean(r1' == r2'))), st'')
-            "<=" -> ((BoolExp (Boolean(r1' == r2'))), st'')
+            "<>" -> ((BoolExp (Boolean(r1' /= r2'))), st'')
+            ">" -> ((BoolExp (Boolean(r1' > r2'))), st'')
+            "<" -> ((BoolExp (Boolean(r1' < r2'))), st'')
+            ">=" -> ((BoolExp (Boolean(r1' >= r2'))), st'')
+            "<=" -> ((BoolExp (Boolean(r1' <= r2'))), st'')
 
 --true expression
 evalBExp (Boolean b) st = 
@@ -48,6 +49,20 @@ evalBExp (Boolean b) st =
 
 -- variable, aka symbol table lookup
 evalBExp (Var_B str) st = 
-    case lookup str (M.toList st) of
-        Just (BoolExp (Boolean v)) -> ((BoolExp (Boolean v)), st)
-        Nothing -> error $ "Boolean exp lookup failed of " ++ str
+    case lookupT str st of
+        ((BoolExp b), st') -> ((BoolExp b), st')
+        ((FloatExp f), st') -> ((FloatExp f), st')
+        _ -> error $ "No boolean value defined of variable " ++ str
+
+    -- let
+    --     ((BoolExp b), st') = lookupT str st
+    -- in
+    --     ((BoolExp b), st')
+
+
+
+
+    -- case lookup str (M.toList st) of
+    --     Just (BoolExp (Boolean v)) -> ((BoolExp (Boolean v)), st)
+    --     --Just (FloatExp (Real v)) -> ((FloatExp (Real v)), st)
+    --     Nothing -> error $ "Boolean exp lookup failed of " ++ str

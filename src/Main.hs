@@ -9,5 +9,8 @@ main = do
     contents <- readFile fileName --contents in just a string
     case parseString contents of 
         Left err -> print $ show err
-        Right ast -> putStrLn $ interpret ast 
+        Right ast -> do
+            putStrLn $ show ast ++ "%%%"
+            putStrLn $ interpret ast
+
 
