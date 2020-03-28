@@ -23,6 +23,16 @@ evalRExp (Op2 op r1 r2) st =
             "/" -> ((FloatExp (Real (r1' / r2'))), st'')
             "+" -> ((FloatExp (Real (r1' + r2'))), st'')
             "-" -> ((FloatExp (Real (r1' - r2'))), st'')
+
+evalRExp (OpEq op r) st = 
+    let ((FloatExp (Real r')), st') = evalRExp r st
+    in
+        case op of
+            "sqrt" -> ((FloatExp (Real (sqrt(r')))), st')
+            "ln" -> ((FloatExp (Real (log(r')))), st')
+            "exp" -> ((FloatExp (Real (exp(r')))), st')
+            "sin" -> ((FloatExp (Real (sin(r')))), st')
+            "cos" -> ((FloatExp (Real (cos(r')))), st')
             
 --float value
 evalRExp (Real r) st = ((FloatExp (Real r)), st)
@@ -32,22 +42,3 @@ evalRExp (Var_R str) st =
     case lookupT str st of
         ((FloatExp f), st') -> ((FloatExp f), st')
         _ -> error $ "No real value defined of variable " ++ str
-    -- let
-    --     ((FloatExp f), st') = lookupT str st
-    -- in
-    --     ((FloatExp f), st')
-
-
-
-
-    
-    -- case lookup str (M.toList st) of
-    --     Just (FloatExp (Real v)) -> ((FloatExp (Real v)), st)
-    --     Nothing -> error $ "Float exp lookup failed of " ++ str
-
-
--- evalBExp (Var_B str) st = 
---     case lookup str (M.toList st) of
---         Just (BoolExp (Boolean v)) -> ((BoolExp (Boolean v)), st)
---         Just (FloatExp (Real v)) -> ((FloatExp (Real v)), st)
---         Nothing -> error $ "Boolean exp lookup failed of " ++ str

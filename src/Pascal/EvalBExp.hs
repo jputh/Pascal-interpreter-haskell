@@ -54,15 +54,3 @@ evalBExp (Var_B str) st =
         ((FloatExp f), st') -> ((FloatExp f), st')
         _ -> error $ "No boolean value defined of variable " ++ str
 
-    -- let
-    --     ((BoolExp b), st') = lookupT str st
-    -- in
-    --     ((BoolExp b), st')
-
-
-
-
-    -- case lookup str (M.toList st) of
-    --     Just (BoolExp (Boolean v)) -> ((BoolExp (Boolean v)), st)
-    --     --Just (FloatExp (Real v)) -> ((FloatExp (Real v)), st)
-    --     Nothing -> error $ "Boolean exp lookup failed of " ++ str

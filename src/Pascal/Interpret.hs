@@ -13,10 +13,7 @@ import qualified Data.Map.Strict as M
 -- Feel free to put them here or in different modules
 -- Hint: write separate evaluators for numeric and
 -- boolean expressions and for statements
--- stringTogether :: [String] -> String -> String
--- stringTogether (x:list) s = s ++ x ++ (stringTogether(list s'))
 
--- stringTogether [] s = ""
 
 -- make sure you write test unit cases for all functions
 
@@ -41,7 +38,6 @@ interpret (vars, states) =
         (str', st') = foldl evalStatementOut ("" ++ (show st) ++ "   ", st) states
     in
         str'
-        
-        -- evalVarDec' = evalVarDec mySymbTab
+
 
 interpret _ = "Not implemented"

@@ -9,17 +9,14 @@ import qualified Data.Map.Strict as M
 
 
 evalVal :: (String, SymTab) -> Val -> (String, SymTab)
--- Real expression
--- evalVal (str, st) (GExp (FloatExp (Var_R x))) = 
---     case lookup str (M.toList st) of
---         Just (FloatExp (Real v)) -> (str ++ (show v), st)
---         Nothing -> error $ "Float exp lookup failed of " ++ str
 
+-- Just ID
 evalVal (str, st) (Val_ID x) = 
     case lookupT x st of
         ((FloatExp (Real f)), st') -> (str ++ (show f), st')
         ((BoolExp (Boolean b)), st') -> (str ++ (show b), st')
         _ -> error $ "No value (writeln) defined of variable " ++ x
+
 
 evalVal (str, st) (GExp (FloatExp r)) =
     let 
@@ -45,11 +42,6 @@ evalVal (str, st) (Val_S s) = (str ++ (removeQuote s), st)
 removeQuote :: String -> String
 removeQuote s = tail (init s)
 
---helper functions for conversion
-
-
--- toGenExp :: Val -> GenExp
--- toGenExp 
 
 
 

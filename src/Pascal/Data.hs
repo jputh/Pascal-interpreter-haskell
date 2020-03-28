@@ -6,6 +6,7 @@ module Pascal.Data
         RExp(..),
         BExp(..),
         Statement(..),
+        Conditional(..),
         GenExp(..),
         Val(..),
         VarDec(..),
@@ -28,6 +29,8 @@ data RExp =
     Op1 String RExp
     -- binary operator (*,/,+,-): Op name leftExpression rightExpression
     | Op2 String RExp RExp
+    -- equations
+    | OpEq String RExp
     -- function call: FunctionCall name ListArguments
     -- | FunCall String [RExp]
     -- real value: e.g. Real 1.0
@@ -58,10 +61,12 @@ data Statement =
     -- writeln statement
     | Writeln [Val]
     -- If statement
-    | If BExp Statement Statement
+    | If_State [Conditional] [Statement]
     -- Block
     | Block [Statement]
     deriving (Show, Eq)
+
+
 
 data Val =
     Val_ID String
@@ -83,9 +88,6 @@ data VarDec =
 
 
 
-
-
-
 -- Data-structure for whole program
 -- TODO: add declarations and other useful stuff
 -- Hint: make a tuple containing the other ingredients
@@ -96,5 +98,5 @@ type SymTab = M.Map String GenExp
 
 type ScopeStack = [SymTab]
 
+type Conditional = (BExp, [Statement])
 
---helper function

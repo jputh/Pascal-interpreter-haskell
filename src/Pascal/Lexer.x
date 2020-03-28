@@ -41,16 +41,18 @@ tokens :-
   $digit+ "." $digit+                       { tok_read     TokenReal }
   True|False                                { tok_read      TokenBool}
   "'" [$alpha $digit \ ]* "'"               { tok_string   TokenStr }
-  \:=                                      { tok_string     TokenOp }
+  \:=                                       { tok_string     TokenOp }
   [\+]|[\-]|[\*]|[\/]                       { tok_string     TokenOp }
   and|or|not                                { tok_string     TokenOp }
+  sqrt|ln|exp|sin|cos                       { tok_string     TokenOp }
   [\=]|[\<>]|[\>]|[\<]|[\>=]|[\<=]          { tok_string     TokenOp }
   [\(]|[\)]|[\;]|[\,]|[\.]                  { tok_string     TokenK }
-  [\:]|[\.]                  { tok_string     TokenK }
+  [\:]|[\.]                                 { tok_string     TokenK }
   begin|end                                 { tok_string     TokenK }
   program|writeln                           { tok_string     TokenK }
   real|boolean                              { tok_string     TokenK }
-  var                              { tok_string     TokenK }
+  var                                       { tok_string     TokenK }
+  if|then|else|else if                              { tok_string     TokenK }
   $alpha [$alpha $digit \_ \']*             { tok_string   TokenID }
 
 {

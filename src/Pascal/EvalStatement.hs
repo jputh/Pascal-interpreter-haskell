@@ -13,19 +13,29 @@ import qualified Data.Map.Strict as M
 
 
 
-evalState :: Statement -> SymTab -> String -> ((GenExp, SymTab), String)
+evalState :: Statement -> SymTab -> String -> (String, SymTab)
 -- assignment
 evalState (Assign x (FloatExp y)) st str =
     let ((FloatExp y'), st') = evalRExp y st
         st'' = addSymbol x (FloatExp y') st'
     in
-        (((FloatExp y'), st''), str ++ "symbol " ++ x ++ " added!")
+        (str ++ "symbol " ++ x ++ " added!", st'')
 
 evalState (Assign x (BoolExp y)) st str = 
     let ((BoolExp y'), st') = evalBExp y st
         st'' = addSymbol x (BoolExp y') st'
     in
-        (((BoolExp y'), st''), str)
+        (str, st'')
+
+evalState (If_State condStmts elseStmt) st str =
+    case filter isTrue (map evalConditional' condStmts) of
+        [] -> foldl evalStatementOut (str, st) elseStmt
+        ((Boolean c1), stmts1):tail -> foldl evalStatementOut (str, st) stmts1
+    
+    where
+        evalConditional' = evalConditional st
+
+
 
 
 -- writeln and any other function that outputs a string (but i dont think there is one)
@@ -35,15 +45,29 @@ evalStatementOut (str, st) (Writeln vals) =
     let 
         (str', st') = foldl evalVal (str, st) vals
     in 
-        (str', st')
+        (str' ++ "\n", st')
 -- last pattern to match; calls evalState
 evalStatementOut (str, st)  statement = 
     let 
-        ((g, st'), str') = evalState statement st str
+        (str', st') = evalState statement st str
     in 
         (str', st')
 
 
---helper function to extract strings writeln
+--HELPER FUNCTIONS
+
+--helper function to evaluate conditional types
+evalConditional :: SymTab -> Conditional -> Conditional
+evalConditional st (b, stmts) =
+    let 
+        ((BoolExp (Boolean b')), st') = evalBExp b st 
+    in
+        ((Boolean b'), stmts)
+
+isTrue :: Conditional -> Bool
+isTrue ((Boolean b), stmts) = b == True
+
+
+
 -- extractStr :: (String)
 
