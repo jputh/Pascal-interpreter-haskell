@@ -40,15 +40,27 @@ evalState (For_Loop id n max stmts) (str, (st:tail)) =
         (a:b:c) = addScope (st':tail)
         ((FloatExp (Real n')), a') = evalRExp n a
         ((FloatExp (Real max')), a'') = evalRExp max a'
-        --a''' = addSymbol id (FloatExp (Real n')) a''
         (str', a''':tail') =
             if n' < max' then
                 evalState (For_Loop id (Real (n' + 1)) (Real max') stmts) (foldl evalStatementOut (str, removeScope(a'':b:c)) stmts)
             else
                 (str, removeScope(a'':b:c))
-
     in 
         (str', a''':tail')
+
+evalState (While_Loop n stmts) (str, (st:tail)) =
+    let
+        (a:b:c) = addScope (st:tail)
+        ((BoolExp (Boolean n')), a') = evalBExp n a
+        (str', a'':tail') =
+            if n' then
+                evalState (While_Loop n stmts) (foldl evalStatementOut (str, removeScope(a':b:c)) stmts)
+            else
+                (str, removeScope(a':b:c))
+    in 
+        (str', a'':tail')
+
+
     -- let
     --     --(a:b:c) = addScope (st:tail)
     --     ((FloatExp (Real n')), st') = evalRExp n st

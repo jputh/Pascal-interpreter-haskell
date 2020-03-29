@@ -95,6 +95,7 @@ Statement :: {Statement}
     | 'if' CondBlock ElseIfBlock ElseBlock { If_State ($2:$3) $4 }    --if-elseif-else statement
     | 'writeln' '(' Vals ')' ';' { Writeln $3 }                       --writeln
     | 'for' ID ':=' RExp 'to' RExp 'do' Block ';' { For_Loop $2 $4 $6 $8 }
+    | 'while' '(' BExp ')' 'do' Block ';' { While_Loop $3 $6 }
 
 
 ElseIfBlock :: {[Conditional]}

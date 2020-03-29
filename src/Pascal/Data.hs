@@ -64,7 +64,7 @@ data Statement =
     | If_State [Conditional] [Statement]
     -- Loop
     | For_Loop String RExp RExp [Statement]
-    | While_Loop String RExp RExp [Statement]
+    | While_Loop BExp [Statement]
     -- Block
     | Block [Statement]
     deriving (Show, Eq)
