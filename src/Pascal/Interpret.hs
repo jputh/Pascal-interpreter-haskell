@@ -32,7 +32,7 @@ interpret :: Program -> String
 -- interpret states = concat (map evalStatementOut' states)
 --     where evalStatementOut' = evalStatementOut st ""
 
-interpret (vars, states) = 
+interpret ((vars, funcs), states) = 
     let 
         --do something before to combine keys and values of function
         --then add function

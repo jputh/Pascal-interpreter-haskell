@@ -1,6 +1,6 @@
 //Tests while loop 
 
-program test8
+program test8;
 var
 b : real = 1;
 q : boolean = True;

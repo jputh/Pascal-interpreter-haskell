@@ -1,7 +1,7 @@
 //Tests if-elseif-else statements/blocks
 //This test shows that if statement blocks are not evaluated unless the corresponding if-statement is true
 
-program test6
+program test6;
 var 
 
 b : real = 0.0;

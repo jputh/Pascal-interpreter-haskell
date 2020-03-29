@@ -58,6 +58,8 @@ import Pascal.Lexer
         'while'         { Token _ (TokenK "while") }
         'to'            { Token _ (TokenK "to") }
         'do'            { Token _ (TokenK "do") }
+        'procedure'     { Token _ (TokenK "procedure") }
+        'function'      { Token _ (TokenK "function") }
 
 
 -- associativity of operators in reverse precedence order
@@ -70,7 +72,7 @@ import Pascal.Lexer
 
 -- Entry point
 Program :: {Program}
-    : 'program' ID VarBlock 'begin' Statements 'end' '.' { ($3, $5) }
+    : 'program' ID ';' VarBlock FuncDecBlock Block '.' { (($4, $5), $6) }
 
 VarBlock :: {[VarDec]}
     : 'var' VarDecs { $2 }
@@ -84,6 +86,33 @@ VarDec :: {VarDec}
     | ID ':' 'boolean' '=' BExp ';' { Init $1 (BoolExp $5) }
     | ID ':' 'real' ';' { DecF $1 }
     | ID ':' 'boolean' ';' { DecB $1 }
+
+FuncDecBlock :: { [Function] }
+    : { [] } -- nothing
+    | FuncDec FuncDecBlock { $1:$2 }
+
+FuncDec :: {Function}
+    : 'function' ID '(' FormalParamList ')' ':' 'real' ';' VarBlock Block ';' { RType_Real $2 ($4, ($9, $10)) }
+    | 'function' ID '(' FormalParamList ')' ':' 'boolean' ';' VarBlock Block ';' { RType_Bool $2 ($4, ($9, $10)) }
+    | 'procedure' ID '(' FormalParamList ')' ';' VarBlock Block ';' { RType_None $2 ($4, ($7, $8)) }
+
+ FormalParamList :: { [ParamGroup] }
+    : { [] } --nothing
+    | ParamGroup { [$1] }
+    | FormalParamList { $1 }
+    | ParamGroup ';' FormalParamList { $1:$3 }
+
+ParamGroup :: { ParamGroup }
+    : VariableList ':' 'real' { Type_Real $1 }
+    | VariableList ':' 'boolean' { Type_Bool $1 }
+
+VariableList :: { [String] }
+    : ID { [$1] }
+    | ID ',' VariableList { $1:$3 }
+
+ 
+
+
 
 Statements :: {[Statement]}
     : { [] } -- nothing; make empty list

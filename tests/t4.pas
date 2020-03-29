@@ -1,5 +1,5 @@
 // Tests common functions (sin, cos, exp, ln, sqrt)
-program test4
+program test4;
 var
 val : real = 4.0;
 

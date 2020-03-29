@@ -1,5 +1,5 @@
 // Tests writeln function and basic program structure
-program test1
+program test1;
 var
 
 begin

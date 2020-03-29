@@ -1,6 +1,6 @@
 // Tests if statements
 
-program test5
+program test5;
 var
 
 a : boolean = True;

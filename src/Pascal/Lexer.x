@@ -51,7 +51,7 @@ tokens :-
   begin|end                                 { tok_string     TokenK }
   program|writeln                           { tok_string     TokenK }
   real|boolean                              { tok_string     TokenK }
-  var                                       { tok_string     TokenK }
+  var|function|procedure                    { tok_string     TokenK }
   if|then|else|else if                      { tok_string     TokenK }
   for|while|to|do                           { tok_string     TokenK }
   $alpha [$alpha $digit \_ \']*             { tok_string   TokenID }

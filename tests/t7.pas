@@ -1,6 +1,6 @@
 //Testing for loop
 
-program test7
+program test7;
 var
 
 begin

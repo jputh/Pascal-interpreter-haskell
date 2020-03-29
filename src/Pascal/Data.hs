@@ -10,9 +10,11 @@ module Pascal.Data
         GenExp(..),
         Val(..),
         VarDec(..),
+        ParamGroup(..),
+        Function(..),
         Program,
         SymTab,
-        ScopeStack
+        FunctionBody
     ) where
 
 import qualified Data.Map.Strict as M
@@ -22,6 +24,7 @@ import qualified Data.Map.Strict as M
 -- Generic data type
 data GenExp = FloatExp RExp | BoolExp BExp 
     deriving (Show, Eq)
+
 
 -- Data-structure for  numeric expressions
 data RExp = 
@@ -87,17 +90,32 @@ data VarDec =
     | DecB String
     deriving (Show, Eq)
 
+data ParamGroup =
+    Type_Real [String] 
+    | Type_Bool [String] 
+    deriving (Show, Eq)
+
+data Function = 
+    RType_Real String FunctionBody
+    | RType_Bool String FunctionBody
+    | RType_None String FunctionBody
+    deriving (Show, Eq)
+
 
 
 -- Data-structure for whole program
 -- TODO: add declarations and other useful stuff
 -- Hint: make a tuple containing the other ingredients
-type Program = ([VarDec], [Statement])
+type Program = (([VarDec], [Function]), [Statement])
 
 --Data Structures for managing scopes:
 type SymTab = M.Map String GenExp
 
-type ScopeStack = [SymTab]
 
 type Conditional = (BExp, [Statement])
+
+type FunctionBody = ([ParamGroup], ([VarDec], [Statement]))
+
+
+
 

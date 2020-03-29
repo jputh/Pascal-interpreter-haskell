@@ -1,6 +1,6 @@
 //Tests for loop and beginning of scopes
 
-program test8
+program test8;
 var
 b : real = 1;
 
