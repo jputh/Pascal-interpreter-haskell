@@ -80,8 +80,8 @@ VarDecs :: {[VarDec]}
     | VarDec VarDecs { $1:$2 }
 
 VarDec :: {VarDec}
-    : ID ':' 'real' '=' RExp ';' { InitF $1 (FloatExp $5) }
-    | ID ':' 'boolean' '=' BExp ';' { InitB $1 (BoolExp $5) }
+    : ID ':' 'real' '=' RExp ';' { Init $1 (FloatExp $5) }
+    | ID ':' 'boolean' '=' BExp ';' { Init $1 (BoolExp $5) }
     | ID ':' 'real' ';' { DecF $1 }
     | ID ':' 'boolean' ';' { DecB $1 }
 

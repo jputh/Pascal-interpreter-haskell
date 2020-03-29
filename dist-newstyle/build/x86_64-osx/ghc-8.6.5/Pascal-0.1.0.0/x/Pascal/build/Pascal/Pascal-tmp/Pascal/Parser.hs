@@ -293,7 +293,7 @@ happyReduction_5 (happy_x_6 `HappyStk`
 	 = case happyOutTok happy_x_1 of { (Token _ (TokenID happy_var_1)) -> 
 	case happyOut15 happy_x_5 of { (HappyWrap15 happy_var_5) -> 
 	happyIn7
-		 (InitF happy_var_1 (FloatExp happy_var_5)
+		 (Init happy_var_1 (FloatExp happy_var_5)
 	) `HappyStk` happyRest}}
 
 happyReduce_6 :: () => Happy_GHC_Exts.Int# -> Token -> Happy_GHC_Exts.Int# -> Happy_IntList -> HappyStk (HappyAbsSyn ) -> Parser (HappyAbsSyn )
@@ -308,7 +308,7 @@ happyReduction_6 (happy_x_6 `HappyStk`
 	 = case happyOutTok happy_x_1 of { (Token _ (TokenID happy_var_1)) -> 
 	case happyOut16 happy_x_5 of { (HappyWrap16 happy_var_5) -> 
 	happyIn7
-		 (InitB happy_var_1 (BoolExp happy_var_5)
+		 (Init happy_var_1 (BoolExp happy_var_5)
 	) `HappyStk` happyRest}}
 
 happyReduce_7 :: () => Happy_GHC_Exts.Int# -> Token -> Happy_GHC_Exts.Int# -> Happy_IntList -> HappyStk (HappyAbsSyn ) -> Parser (HappyAbsSyn )

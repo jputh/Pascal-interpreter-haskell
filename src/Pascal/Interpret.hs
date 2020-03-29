@@ -34,6 +34,8 @@ interpret :: Program -> String
 
 interpret (vars, states) = 
     let 
+        --do something before to combine keys and values of function
+        --then add function
         st = foldl evalVarDec mySymbTab vars
         (str', st') = foldl evalStatementOut ("" ++ (show st) ++ "   ", (st:[])) states
     in

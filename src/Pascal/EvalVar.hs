@@ -11,14 +11,14 @@ import qualified Data.Map.Strict as M
 --type ScopeStack = [SymTab]
 
 evalVarDec :: SymTab -> VarDec -> SymTab
-evalVarDec st (InitF x (FloatExp f)) = 
+evalVarDec st (Init x (FloatExp f)) = 
     let 
         ((FloatExp (Real f')), st') = evalRExp f st
         st'' = addSymbol x (FloatExp (Real f')) st'
     in
         st''
 
-evalVarDec st (InitB x (BoolExp b)) =
+evalVarDec st (Init x (BoolExp b)) =
     let 
         ((BoolExp (Boolean b')), st') = evalBExp b st
         st'' = addSymbol x (BoolExp (Boolean b')) st'

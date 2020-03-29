@@ -79,10 +79,8 @@ data Val =
 
 
 data VarDec = 
-    -- Initializing a Real Expression
-    InitF String GenExp
-    -- Initializing a Boolean Expression
-    | InitB String GenExp
+    -- Initializing a Real or Boolean expression
+    Init String GenExp
     -- Declaring a Real Expression to default value
     | DecF String
     -- Declaring a Boolean Expression to default value
