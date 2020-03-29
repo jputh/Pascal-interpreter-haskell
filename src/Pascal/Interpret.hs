@@ -35,7 +35,7 @@ interpret :: Program -> String
 interpret (vars, states) = 
     let 
         st = foldl evalVarDec mySymbTab vars
-        (str', st') = foldl evalStatementOut ("" ++ (show st) ++ "   ", st) states
+        (str', st') = foldl evalStatementOut ("" ++ (show st) ++ "   ", (st:[])) states
     in
         str'
 
