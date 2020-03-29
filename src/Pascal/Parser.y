@@ -54,6 +54,11 @@ import Pascal.Lexer
         'else'          { Token _ (TokenK "else") }
         'then'          { Token _ (TokenK "then") }
         'else if'       { Token _ (TokenK "else if") }
+        'for'           { Token _ (TokenK "for") }
+        'while'         { Token _ (TokenK "while") }
+        'to'            { Token _ (TokenK "to") }
+        'do'            { Token _ (TokenK "do") }
+
 
 -- associativity of operators in reverse precedence order
 %nonassoc '>' '>=' '<' '<=' '=' '<>'
@@ -85,10 +90,11 @@ Statements :: {[Statement]}
     | Statement Statements { $1:$2 } -- put statement as first element of statements
 
 Statement :: {Statement}
-    : ID ':=' RExp ';'{ Assign $1 (FloatExp $3) }                   --assignment of real
-    | ID ':=' BExp ';'{ Assign $1 (BoolExp $3) }                    --assignment of boolean
+    : ID ':=' RExp ';'{ Assign $1 (FloatExp $3) }                     --assignment of real
+    | ID ':=' BExp ';'{ Assign $1 (BoolExp $3) }                      --assignment of boolean
     | 'if' CondBlock ElseIfBlock ElseBlock { If_State ($2:$3) $4 }    --if-elseif-else statement
-    | 'writeln' '(' Vals ')' ';' { Writeln $3 }                     --writeln
+    | 'writeln' '(' Vals ')' ';' { Writeln $3 }                       --writeln
+    | 'for' ID ':=' RExp 'to' RExp 'do' Block ';' { For_Loop $2 $4 $6 $8 }
 
 
 ElseIfBlock :: {[Conditional]}

@@ -13,27 +13,41 @@ import qualified Data.Map.Strict as M
 
 
 
-evalState :: Statement -> SymTab -> String -> (String, SymTab)
+evalState :: Statement -> (String, SymTab) -> (String, SymTab)
 -- assignment
-evalState (Assign x (FloatExp y)) st str =
+evalState (Assign x (FloatExp y)) (str, st) =
     let ((FloatExp y'), st') = evalRExp y st
         st'' = addSymbol x (FloatExp y') st'
     in
         (str ++ "symbol " ++ x ++ " added!", st'')
 
-evalState (Assign x (BoolExp y)) st str = 
+evalState (Assign x (BoolExp y)) (str, st) = 
     let ((BoolExp y'), st') = evalBExp y st
         st'' = addSymbol x (BoolExp y') st'
     in
         (str, st'')
 
-evalState (If_State condStmts elseStmt) st str =
+evalState (If_State condStmts elseStmt) (str, st) =
     case filter isTrue (map evalConditional' condStmts) of
         [] -> foldl evalStatementOut (str, st) elseStmt
         ((Boolean c1), stmts1):tail -> foldl evalStatementOut (str, st) stmts1
     
     where
         evalConditional' = evalConditional st
+
+evalState (For_Loop id n max stmts) (str, st) =
+    let
+        ((FloatExp (Real n')), st') = evalRExp n st
+        ((FloatExp (Real max')), st'') = evalRExp max st'
+        st''' = addSymbol id (FloatExp (Real n')) st''
+        (str', st'''') =
+            if n' < max' then
+                evalState (For_Loop id (Real (n' + 1)) (Real max') stmts) (foldl evalStatementOut (str, st''') stmts)
+            else
+                (str, st''')
+
+    in 
+        (str', st'''')
 
 
 
@@ -49,7 +63,7 @@ evalStatementOut (str, st) (Writeln vals) =
 -- last pattern to match; calls evalState
 evalStatementOut (str, st)  statement = 
     let 
-        (str', st') = evalState statement st str
+        (str', st') = evalState statement (str, st)
     in 
         (str', st')
 
@@ -64,10 +78,18 @@ evalConditional st (b, stmts) =
     in
         ((Boolean b'), stmts)
 
+--helper function for if-statements
 isTrue :: Conditional -> Bool
 isTrue ((Boolean b), stmts) = b == True
 
 
+--creating a new scope
+addScope :: [SymTab] -> [SymTab]
+addScope (st:tail) = 
+    let 
+        newST = st
+    in 
+        (newST:st:tail)
 
--- extractStr :: (String)
-
+removeScope :: [SymTab] -> [SymTab]
+removeScope (st1:st2:tail) = (M.intersection st1 st2):tail

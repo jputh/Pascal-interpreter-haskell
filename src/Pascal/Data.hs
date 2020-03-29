@@ -62,6 +62,9 @@ data Statement =
     | Writeln [Val]
     -- If statement
     | If_State [Conditional] [Statement]
+    -- Loop
+    | For_Loop String RExp RExp [Statement]
+    | While_Loop String RExp RExp [Statement]
     -- Block
     | Block [Statement]
     deriving (Show, Eq)

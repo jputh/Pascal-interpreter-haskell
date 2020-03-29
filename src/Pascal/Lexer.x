@@ -38,7 +38,7 @@ $alpha = [a-zA-Z]               -- alphabetic characters
 tokens :-
   $white+                                   ; -- remove multiple white-spaces
   "//".*                                    ; -- skip one line comments
-  $digit+ "." $digit+                       { tok_read     TokenReal }
+  $digit+ "." $digit+ | $digit+             { tok_read     TokenReal }
   True|False                                { tok_read      TokenBool}
   "'" [$alpha $digit \ ]* "'"               { tok_string   TokenStr }
   \:=                                       { tok_string     TokenOp }
@@ -52,7 +52,8 @@ tokens :-
   program|writeln                           { tok_string     TokenK }
   real|boolean                              { tok_string     TokenK }
   var                                       { tok_string     TokenK }
-  if|then|else|else if                              { tok_string     TokenK }
+  if|then|else|else if                      { tok_string     TokenK }
+  for|while|to|do                           { tok_string     TokenK }
   $alpha [$alpha $digit \_ \']*             { tok_string   TokenID }
 
 {
