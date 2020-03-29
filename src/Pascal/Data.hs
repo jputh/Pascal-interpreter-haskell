@@ -11,10 +11,11 @@ module Pascal.Data
         Val(..),
         VarDec(..),
         ParamGroup(..),
-        Function(..),
+        FunctionBody(..),
         Program,
         SymTab,
-        FunctionBody
+        FuncTab,
+        Function
     ) where
 
 import qualified Data.Map.Strict as M
@@ -34,8 +35,6 @@ data RExp =
     | Op2 String RExp RExp
     -- equations
     | OpEq String RExp
-    -- function call: FunctionCall name ListArguments
-    -- | FunCall String [RExp]
     -- real value: e.g. Real 1.0
     | Real Float
     -- variable: e.g. Var "x"
@@ -61,6 +60,10 @@ data Statement =
     -- TODO: add other statements
     -- Variable assignment
     Assign String GenExp
+    -- procedure call
+    | ProcCall String [GenExp]
+    -- function call: FunctionCall name ListArguments
+    | FuncCall String String [GenExp] 
     -- writeln statement
     | Writeln [Val]
     -- If statement
@@ -95,10 +98,11 @@ data ParamGroup =
     | Type_Bool [String] 
     deriving (Show, Eq)
 
-data Function = 
-    RType_Real String FunctionBody
-    | RType_Bool String FunctionBody
-    | RType_None String FunctionBody
+
+data FunctionBody = 
+    RType_Real [ParamGroup] [VarDec] [Statement]
+    | RType_Bool [ParamGroup] [VarDec] [Statement]
+    | RType_None [ParamGroup] [VarDec] [Statement]
     deriving (Show, Eq)
 
 
@@ -111,10 +115,15 @@ type Program = (([VarDec], [Function]), [Statement])
 --Data Structures for managing scopes:
 type SymTab = M.Map String GenExp
 
+type FuncTab = M.Map String FunctionBody
+
 
 type Conditional = (BExp, [Statement])
 
-type FunctionBody = ([ParamGroup], ([VarDec], [Statement]))
+type Function = (String, FunctionBody)
+
+
+
 
 
 

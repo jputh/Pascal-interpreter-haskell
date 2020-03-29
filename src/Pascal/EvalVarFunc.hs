@@ -1,4 +1,4 @@
-module Pascal.EvalVar where
+module Pascal.EvalVarFunc where
 
 
 import Pascal.Data
@@ -7,9 +7,8 @@ import Pascal.EvalBExp
 import qualified Data.Map.Strict as M
 
 
-
---type ScopeStack = [SymTab]
-
+-- FUNCTIONS FOR SYMBOL TABLE
+-- Initializing variables
 evalVarDec :: SymTab -> VarDec -> SymTab
 evalVarDec st (Init x (FloatExp f)) = 
     let 
@@ -25,7 +24,7 @@ evalVarDec st (Init x (BoolExp b)) =
     in
         st''
     
--- evalVarDec st (InitB x (BoolExp b)) = addSymbol x (BoolExp b) st
+-- Declaring variables
 evalVarDec st (DecF x) = addSymbol x (FloatExp (Real (0.0::Float))) st
 evalVarDec st (DecB x) = addSymbol x (BoolExp (Boolean (False::Bool))) st
 
@@ -42,3 +41,19 @@ addSymbol x (BoolExp b) st =
         (BoolExp (Boolean b'), st') = evalBExp b st 
     in
         M.insert x (BoolExp (Boolean b')) st
+
+
+--FUNCTIONS FOR FUNCTION TABLE
+--add function to function table
+addFunc :: FuncTab -> Function  -> FuncTab
+addFunc ft (id, body)  = 
+    -- let
+    --     st = M.empty
+    --     st' = foldl evalVarDec st vars -- add variables in var block to symbol table
+    M.insert id body ft
+
+
+-- addFormalParams :: ParamGroup -> SymTab -> SymTab
+-- addFormalParams pg st =
+--     case pg of
+--         (Type_Real ids) -> foldl addSymbol' st ids
