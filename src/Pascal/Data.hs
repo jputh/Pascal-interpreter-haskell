@@ -10,7 +10,6 @@ module Pascal.Data
         GenExp(..),
         Val(..),
         VarDec(..),
-        ParamGroup(..),
         FunctionBody(..),
         Program,
         SymTab,
@@ -59,11 +58,11 @@ data BExp =
 data Statement = 
     -- TODO: add other statements
     -- Variable assignment
-    Assign String GenExp
+    Assign String Val
     -- procedure call
-    | ProcCall String [GenExp]
+    | ProcCall String [Val]
     -- function call: FunctionCall name ListArguments
-    | FuncCall String String [GenExp] 
+    | FuncCall String String [Val] 
     -- writeln statement
     | Writeln [Val]
     -- If statement
@@ -76,7 +75,7 @@ data Statement =
     deriving (Show, Eq)
 
 
-
+-- handles all things passed into writeln function
 data Val =
     Val_ID String
     | GExp GenExp
@@ -93,17 +92,17 @@ data VarDec =
     | DecB String
     deriving (Show, Eq)
 
-data ParamGroup =
-    Type_Real [String] 
-    | Type_Bool [String] 
-    deriving (Show, Eq)
-
 
 data FunctionBody = 
-    RType_Real [ParamGroup] [VarDec] [Statement]
-    | RType_Bool [ParamGroup] [VarDec] [Statement]
-    | RType_None [ParamGroup] [VarDec] [Statement]
+    RType_Real [String] [VarDec] [Statement]
+    | RType_Bool [String] [VarDec] [Statement]
+    | RType_None [String] [VarDec] [Statement]
     deriving (Show, Eq)
+
+
+--unlike Val, handles all things that can be passed as parameters into functions/procedures
+-- data Parameter =
+
 
 
 

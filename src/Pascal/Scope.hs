@@ -12,3 +12,10 @@ lookupT x st =
         Just (BoolExp (Boolean b)) -> ((fromJust (Just (BoolExp (Boolean b)))), st)
         Nothing -> error $ "Lookup function failed at root of " ++ x
 
+lookupF :: String -> FuncTab -> FunctionBody
+lookupF s ft = 
+    case M.lookup s ft of 
+        Just (RType_Real pg vars stmts) -> (fromJust (Just (RType_Real pg vars stmts)))
+        Just (RType_Bool pg vars stmts) -> (fromJust (Just (RType_Bool pg vars stmts)))
+        Just (RType_None pg vars stmts) -> (fromJust (Just (RType_None pg vars stmts)))
+        Nothing -> error $ "Lookup function failed at root of " ++ s

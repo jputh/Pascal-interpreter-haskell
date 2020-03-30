@@ -37,9 +37,12 @@ interpret :: Program -> String
 
 interpret ((vars, funcs), stmts) = 
     let 
+        
         ft = foldl addFunc myFuncTab funcs -- create function table
+        
         st = foldl evalVarDec mySymbTab vars -- create symbol table
-        ((str', st'), ft') = foldl evalStatementOut (("" ++ (show st) ++ "   ", (st:[])), ft) stmts
+        
+        ((str', st'), ft') = foldl evalStatementOut ((""  ++ (show st) ++ "     ^^^^^^     " ++ (show ft) ++ "   ", (st:[])), ft) stmts
     in
         str'
 

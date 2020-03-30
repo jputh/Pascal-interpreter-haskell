@@ -96,15 +96,15 @@ FuncDec :: {Function}
     | 'function' ID '(' FormalParamList ')' ':' 'boolean' ';' VarBlock Block ';' {  ($2, (RType_Bool $4 $9 $10)) }
     | 'procedure' ID '(' FormalParamList ')' ';' VarBlock Block ';' { ($2, (RType_None $4 $7 $8)) }
 
- FormalParamList :: { [ParamGroup] }
+ FormalParamList :: { [String] }
     : { [] } --nothing
-    | ParamGroup { [$1] }
+    | ParamGroup { $1 }
     | FormalParamList { $1 }
-    | ParamGroup ';' FormalParamList { $1:$3 }
+    | ParamGroup ';' FormalParamList { $1 ++ $3 }
 
-ParamGroup :: { ParamGroup }
-    : VariableList ':' 'real' { Type_Real $1 }
-    | VariableList ':' 'boolean' { Type_Bool $1 }
+ParamGroup :: { [String] }
+    : VariableList ':' 'real' { $1 }
+    | VariableList ':' 'boolean' { $1 }
 
 VariableList :: { [String] }
     : ID { [$1] }
@@ -119,8 +119,7 @@ Statements :: {[Statement]}
     | Statement Statements { $1:$2 } -- put statement as first element of statements
 
 Statement :: {Statement}
-    : ID ':=' RExp ';'{ Assign $1 (FloatExp $3) }                     --assignment of real
-    | ID ':=' BExp ';'{ Assign $1 (BoolExp $3) }
+    : ID ':=' Generic ';' { Assign $1 $3 }
     | ID '(' Parameters ')' ';' { ProcCall $1 $3 } 
     | ID ':=' ID '(' Parameters ')' ';' { FuncCall $1 $3 $5 }                      --assignment of boolean
     | 'if' CondBlock ElseIfBlock ElseBlock { If_State ($2:$3) $4 }    --if-elseif-else statement
@@ -129,7 +128,7 @@ Statement :: {Statement}
     | 'while' '(' BExp ')' 'do' Block ';' { While_Loop $3 $6 }
 
 
-Parameters :: {[GenExp]}
+Parameters :: {[Val]}
     : { [] } --nothing
     | Generic { [$1] }
     | Parameters { $1 }
@@ -207,8 +206,9 @@ Vals :: {[Val]}
 Block :: {[Statement]}
     : 'begin' Statements 'end' { $2 }
 
-Generic :: {GenExp}
-    : RExp {(FloatExp $1)}
-    | BExp {(BoolExp $1)}
+Generic :: {Val}
+    : ID {(Val_ID $1)}
+    | RExp { GExp (FloatExp $1) }
+    | BExp { GExp (BoolExp $1) }
 
 {}
