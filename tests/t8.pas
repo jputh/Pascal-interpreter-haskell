@@ -1,4 +1,10 @@
 //Tests for loop and beginning of scopes
+//output: b is equal to 1.0
+//b is equal to 2.0
+//b is equal to 4.0
+//b is equal to 7.0
+//Lucky number
+//b is equal to 11.0
 
 program test8;
 var

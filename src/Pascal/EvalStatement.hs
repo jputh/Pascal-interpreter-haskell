@@ -3,7 +3,8 @@ module Pascal.EvalStatement where
     
 import Pascal.Data
 import Pascal.EvalRExp
-import Pascal.EvalVal
+import Pascal.EvalBExp
+import Pascal.Auxilary
 import Pascal.Scope
 import Data.Maybe (fromJust)
 import qualified Data.Map.Strict as M
@@ -20,22 +21,17 @@ evalState (Assign x val) ((str, (st:tail)), ft) =
         genVal = evalValParam ((str, (st:tail)), ft) val
         ((str', (st':tail')), ft') = addSymbol x genVal ((str, (st:tail)), ft)
     in
-        ((str' ++ "symbol " ++ x ++ " added!", (st':tail')), ft')
+        ((str', (st':tail')), ft')
 
 --procedure call
 evalState (ProcCall procId paramList) ((str, (st:tail)), ft) =
     let
         params = map (evalValParam ((str, (st:tail)), ft)) paramList
         func = lookupF procId ft
-            --case lookupF procId ft of
-                --(RType_None pg vars stmts) -> ((str ++ "function table found " ++ procId , st:tail), ft)
-                    --((str ++ " $$$$$$$$$$  " ++ (show st) ++ " $$$$$$$$$$  ", (st:tail)), ft)
-                --_ -> error $ "No procedure found of name " ++ procId
         (a', stmts2) = setFScope func params ((str, (st:tail)), ft) procId
         ((str', a'':tail'), ft') = foldl evalStatementOut ((str, a':[]), ft) stmts2
         (a''':tail'') = removeScope(a'':st:tail)
     in
-        --((str ++ " $$$$$$$$$$  " ++ (show str') ++ " $$$$$$$$$$  ", (a''':tail'')), ft)
         ((str', (a''':tail'')), ft)
 
 --function call
@@ -43,12 +39,7 @@ evalState (FuncCall x funcId paramList) ((str, (st:tail)), ft) =
     let
         params = map (evalValParam ((str, (st:tail)), ft)) paramList
         func = lookupF funcId ft
-            --case lookupF procId ft of
-                --(RType_None pg vars stmts) -> ((str ++ "function table found " ++ procId , st:tail), ft)
-                    --((str ++ " $$$$$$$$$$  " ++ (show st) ++ " $$$$$$$$$$  ", (st:tail)), ft)
-                --_ -> error $ "No procedure found of name " ++ procId
         (a', stmts2) = setFScope func params ((str, (st:tail)), ft) funcId
-        --((str, (a'':tail)), ft) = evalVarDec ((str, (a':tail)), ft) (DecF funcId)
         ((str', a'':tail'), ft') = foldl evalStatementOut ((str, a':[]), ft) stmts2
         (result, stTemp) = lookupT funcId a''
         (a''':tail'') = removeScope(a'':st:tail)
@@ -79,18 +70,7 @@ evalState (For_Loop id n max stmts) ((str, (st:tail)), ft) =
                 ((str, removeScope(a'':b:c)), ft)
     in 
         ((str'', a''':tail'), ft)
-    -- let
-    --     st' = addSymbol id (FloatExp (Real n')) ((str, (st:tail)), ft)
-    --     (a:b:c) = addScope (st':tail)
-    --     ((FloatExp (Real n')), a') = evalRExp n ((str, (a:[])), ft)
-    --     ((FloatExp (Real max')), a'') = evalRExp max ((str, (a':[])), ft)
-    --     ((str', a''':tail'), ft) =
-    --         if n' < max' then
-    --             evalState (For_Loop id (Real (n' + 1)) (Real max') stmts) (foldl evalStatementOut ((str, removeScope(a'':b:c)), ft) stmts)
-    --         else
-    --             ((str, removeScope(a'':b:c)), ft)
-    -- in 
-    --     ((str', a''':tail'), ft)
+
 
 --while loop
 evalState (While_Loop n stmts) ((str, (st:tail)), ft) =
@@ -105,22 +85,6 @@ evalState (While_Loop n stmts) ((str, (st:tail)), ft) =
     in 
         ((str', a'':tail'), ft)
 
-
-
-    -- let
-    --     --(a:b:c) = addScope (st:tail)
-    --     ((FloatExp (Real n')), st') = evalRExp n st
-    --     ((FloatExp (Real max')), st'') = evalRExp max st'
-        
-    --     st''' = addSymbol id (FloatExp (Real n')) st''
-    --     (str', (st'''':tail)) =
-    --         if n' < max' then
-    --             evalState (For_Loop id (Real (n' + 1)) (Real max') stmts) (foldl evalStatementOut (str, (st''':tail)) stmts)
-    --         else
-    --             (str', (st''':tail))
-
-    -- in 
-    --     (str', (st'''':tail))
 
 
 
@@ -138,7 +102,6 @@ evalStatementOut ((str, (st:tail)), ft)  statement =
         ((str', (st':tail')), ft') = evalState statement ((str, (st:tail)), ft)
     in 
         ((str', (st':tail')), ft')
-
 
 
 

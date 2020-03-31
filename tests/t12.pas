@@ -1,4 +1,5 @@
 //Tests functions
+//output: a multiplied by 5 is 25.0
 
 program test12;
 

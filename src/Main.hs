@@ -10,7 +10,6 @@ main = do
     case parseString contents of 
         Left err -> print $ show err
         Right ast -> do
-            putStrLn $ show ast ++ "%%%"
             putStrLn $ interpret ast
 
 

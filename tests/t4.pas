@@ -1,4 +1,6 @@
 // Tests common functions (sin, cos, exp, ln, sqrt)
+//output: value of 4 when plugged into the following functions
+
 program test4;
 var
 val : real = 4.0;

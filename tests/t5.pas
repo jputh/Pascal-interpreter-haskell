@@ -1,4 +1,5 @@
-// Tests if statements
+// Tests if-elseif-else statements
+//output: "The values are equal"
 
 program test5;
 var

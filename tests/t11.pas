@@ -1,4 +1,5 @@
 //Tests procedures
+//output: Minimum value is 9.0
 
 program t10;
 var

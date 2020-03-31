@@ -1,4 +1,6 @@
 // Tests variable declaration, saving in a symbol table, and writeln functionality
+//output: "False"
+
 program test3;
 var
 b : real = 2.0;

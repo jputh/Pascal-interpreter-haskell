@@ -1,4 +1,10 @@
 //Tests while loop 
+//output:
+//She loves me
+//She loves me not
+//She loves me
+//She loves me not
+//She loves me
 
 program test8;
 var

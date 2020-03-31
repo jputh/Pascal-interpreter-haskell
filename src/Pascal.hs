@@ -11,6 +11,6 @@ import           Pascal.Wrapper
 import           Pascal.Interpret
 import           Pascal.Scope 
 import           Pascal.EvalRExp
-import           Pascal.EvalVal
+import           Pascal.EvalBExp
 ----------------------------------------------------------------------------
 

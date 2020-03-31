@@ -1,5 +1,8 @@
 //Tests if-elseif-else statements/blocks
 //This test shows that if statement blocks are not evaluated unless the corresponding if-statement is true
+//output: "c is pretty small but we can make it humungous"
+// "c is now equal to 200.0"
+// "Why do we care so much about c"
 
 program test6;
 var 

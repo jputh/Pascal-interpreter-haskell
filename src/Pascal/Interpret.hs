@@ -5,8 +5,9 @@ module Pascal.Interpret
 where
 
 import Pascal.Data
-import Pascal.EvalRExp
+
 import Pascal.EvalStatement
+import Pascal.Auxilary
 import qualified Data.Map.Strict as M
 
 -- TODO: define auxiliary functions to aid interpretation
@@ -43,7 +44,7 @@ interpret ((vars, funcs), stmts) =
         
         ((tempStr, st:tail), tempFt) = foldl evalVarDec (("", (mySymbTab:[])), ft) vars -- create symbol table
         
-        ((str', st'), ft') = foldl evalStatementOut (("" ++  "      ", (st:[])), ft) stmts
+        ((str', st'), ft') = foldl evalStatementOut (("", (st:[])), ft) stmts
     in
         str'
 
