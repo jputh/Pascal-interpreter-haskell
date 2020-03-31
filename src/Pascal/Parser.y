@@ -119,7 +119,7 @@ Statements :: {[Statement]}
     | Statement Statements { $1:$2 } -- put statement as first element of statements
 
 Statement :: {Statement}
-    : ID ':=' Generic ';' { Assign $1 $3 }
+    : ID ':=' Generic ';' { Assign $1 $3}
     | ID '(' Parameters ')' ';' { ProcCall $1 $3 } 
     | ID ':=' ID '(' Parameters ')' ';' { FuncCall $1 $3 $5 }                      --assignment of boolean
     | 'if' CondBlock ElseIfBlock ElseBlock { If_State ($2:$3) $4 }    --if-elseif-else statement

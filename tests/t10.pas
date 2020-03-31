@@ -10,9 +10,15 @@ var
 q : real = 10;
 begin
 if(a < q) then
+begin
+    a := 500;
     writeln('hello');
+    end;
 else
+begin
+    q := 1000;
     writeln('I hate you');
+    end;
 end;
 
 procedure SayHello2();
@@ -25,7 +31,6 @@ begin
 
 SayHello(7);
 SayHello(11);
-SayHello2();
-SayHello2();
+
 
 end.

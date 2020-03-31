@@ -2,9 +2,7 @@ module Pascal.EvalStatement where
     --evaluator for statement data type
     
 import Pascal.Data
-import Pascal.EvalVarFunc
 import Pascal.EvalRExp
-import Pascal.EvalBExp
 import Pascal.EvalVal
 import Pascal.Scope
 import Data.Maybe (fromJust)
@@ -19,56 +17,86 @@ evalState :: Statement -> ((String, [SymTab]), FuncTab) -> ((String, [SymTab]), 
 -- assignment
 evalState (Assign x val) ((str, (st:tail)), ft) =
     let
-        genVal = evalValParam (str, (st:tail)) val
-        st' = addSymbol x genVal st
+        genVal = evalValParam ((str, (st:tail)), ft) val
+        ((str', (st':tail')), ft') = addSymbol x genVal ((str, (st:tail)), ft)
     in
-        ((str ++ "symbol " ++ x ++ " added!", (st':tail)), ft)
+        ((str' ++ "symbol " ++ x ++ " added!", (st':tail')), ft')
 
-
+--procedure call
 evalState (ProcCall procId paramList) ((str, (st:tail)), ft) =
-    
     let
-        params = map (evalValParam (str, (st:tail))) paramList
+        params = map (evalValParam ((str, (st:tail)), ft)) paramList
         func = lookupF procId ft
             --case lookupF procId ft of
                 --(RType_None pg vars stmts) -> ((str ++ "function table found " ++ procId , st:tail), ft)
                     --((str ++ " $$$$$$$$$$  " ++ (show st) ++ " $$$$$$$$$$  ", (st:tail)), ft)
                 --_ -> error $ "No procedure found of name " ++ procId
-        (a', stmts2) = setFScope func params st procId
+        (a', stmts2) = setFScope func params ((str, (st:tail)), ft) procId
         ((str', a'':tail'), ft') = foldl evalStatementOut ((str, a':[]), ft) stmts2
         (a''':tail'') = removeScope(a'':st:tail)
     in
-        ((str', a''':tail''), ft')
+        --((str ++ " $$$$$$$$$$  " ++ (show str') ++ " $$$$$$$$$$  ", (a''':tail'')), ft)
+        ((str', (a''':tail'')), ft)
+
+--function call
+evalState (FuncCall x funcId paramList) ((str, (st:tail)), ft) =
+    let
+        params = map (evalValParam ((str, (st:tail)), ft)) paramList
+        func = lookupF funcId ft
+            --case lookupF procId ft of
+                --(RType_None pg vars stmts) -> ((str ++ "function table found " ++ procId , st:tail), ft)
+                    --((str ++ " $$$$$$$$$$  " ++ (show st) ++ " $$$$$$$$$$  ", (st:tail)), ft)
+                --_ -> error $ "No procedure found of name " ++ procId
+        (a', stmts2) = setFScope func params ((str, (st:tail)), ft) funcId
+        --((str, (a'':tail)), ft) = evalVarDec ((str, (a':tail)), ft) (DecF funcId)
+        ((str', a'':tail'), ft') = foldl evalStatementOut ((str, a':[]), ft) stmts2
+        (result, stTemp) = lookupT funcId a''
+        (a''':tail'') = removeScope(a'':st:tail)
+        ((fStr, (fSt:fTail)), fFt) = addSymbol x result ((str', a''':tail''), ft)
+    in 
+        ((fStr, (fSt:fTail)), ft)
 
 
+--if statement
 evalState (If_State condStmts elseStmt) ((str, (st:tail)), ft) =
     case filter isTrue (map evalConditional' condStmts) of
         [] -> foldl evalStatementOut ((str, (st:tail)), ft) elseStmt
         ((Boolean c1), stmts1):condTail -> foldl evalStatementOut ((str, (st:tail)), ft) stmts1
     where
-        evalConditional' = evalConditional st
+        evalConditional' = evalConditional ((str, (st:tail)), ft)
 
+--for loop
 evalState (For_Loop id n max stmts) ((str, (st:tail)), ft) =
     let
-        st' = addSymbol id (FloatExp (Real n')) st
+        ((str', (st':tail)), ft') = addSymbol id (FloatExp (Real n')) ((str, (st:tail)), ft)
         (a:b:c) = addScope (st':tail)
-        ((FloatExp (Real n')), a') = evalRExp n a
-        ((FloatExp (Real max')), a'') = evalRExp max a'
-        ((str', a''':tail'), ft) =
+        ((FloatExp (Real n')), a') = evalRExp n ((str, (a:[])), ft)
+        ((FloatExp (Real max')), a'') = evalRExp max ((str, (a':[])), ft)
+        ((str'', a''':tail'), ft) =
             if n' < max' then
                 evalState (For_Loop id (Real (n' + 1)) (Real max') stmts) (foldl evalStatementOut ((str, removeScope(a'':b:c)), ft) stmts)
             else
                 ((str, removeScope(a'':b:c)), ft)
     in 
-        ((str', a''':tail'), ft)
-    -- where
-    --     evalStatementOut' = evalStatementOut ft
+        ((str'', a''':tail'), ft)
+    -- let
+    --     st' = addSymbol id (FloatExp (Real n')) ((str, (st:tail)), ft)
+    --     (a:b:c) = addScope (st':tail)
+    --     ((FloatExp (Real n')), a') = evalRExp n ((str, (a:[])), ft)
+    --     ((FloatExp (Real max')), a'') = evalRExp max ((str, (a':[])), ft)
+    --     ((str', a''':tail'), ft) =
+    --         if n' < max' then
+    --             evalState (For_Loop id (Real (n' + 1)) (Real max') stmts) (foldl evalStatementOut ((str, removeScope(a'':b:c)), ft) stmts)
+    --         else
+    --             ((str, removeScope(a'':b:c)), ft)
+    -- in 
+    --     ((str', a''':tail'), ft)
 
-
+--while loop
 evalState (While_Loop n stmts) ((str, (st:tail)), ft) =
     let
         (a:b:c) = addScope (st:tail)
-        ((BoolExp (Boolean n')), a') = evalBExp n a
+        ((BoolExp (Boolean n')), a') = evalBExp n ((str, (a:[])), ft)
         ((str', a'':tail'), ft) =
             if n' then
                 evalState (While_Loop n stmts) (foldl evalStatementOut ((str, removeScope(a':b:c)), ft) stmts)
@@ -96,13 +124,12 @@ evalState (While_Loop n stmts) ((str, (st:tail)), ft) =
 
 
 
-
 -- writeln and any other function that outputs a string (but i dont think there is one)
 -- should be matched by evalStatementOut.
 evalStatementOut :: ((String, [SymTab]), FuncTab) -> Statement -> ((String, [SymTab]), FuncTab) --((GenExp, SymTab), String)
 evalStatementOut ((str, (st:tail)), ft) (Writeln vals) = 
     let 
-        (str', (st':tail)) = foldl evalValW (str, (st:tail)) vals
+        ((str', (st':tail)), ft) = foldl evalValW ((str, (st:tail)), ft) vals
     in 
         ((str' ++ "\n", (st':tail)), ft)
 -- last pattern to match; calls evalState
@@ -117,13 +144,14 @@ evalStatementOut ((str, (st:tail)), ft)  statement =
 
 
 
+
 --HELPER FUNCTIONS
 
 --helper function to evaluate conditional types
-evalConditional :: SymTab -> Conditional -> Conditional
-evalConditional st (b, stmts) =
+evalConditional :: ((String, [SymTab]), FuncTab) -> Conditional -> Conditional
+evalConditional ((str, (st:tail)), ft) (b, stmts) =
     let 
-        ((BoolExp (Boolean b')), st') = evalBExp b st 
+        ((BoolExp (Boolean b')), st') = evalBExp b ((str, (st:tail)), ft) 
     in
         ((Boolean b'), stmts)
 
@@ -142,34 +170,5 @@ removeScope :: [SymTab] -> [SymTab]
 removeScope (st1:st2:tail) = ((M.intersection st1 st2):tail)
 
 
---setting up scope of functions and procedure,
-setFScope :: FunctionBody -> [GenExp] -> SymTab -> String -> (SymTab, [Statement])
-setFScope (RType_Real pg vars stmts) exprs st name =
-    let
-        st' = foldl evalVarDec st vars -- add variable declarations
-        vars2 = zipWith matchParam pg exprs
-        st'' = foldl evalVarDec st' vars2
-        st''' = addSymbol name (FloatExp (Real (0.0::Float))) st''
-    in 
-        (st''', stmts)
 
-setFScope (RType_Bool pg vars stmts) exprs st name =
-    let
-        st' = foldl evalVarDec st vars -- add variable declarations
-        vars2 = zipWith matchParam pg exprs
-        st'' = foldl evalVarDec st' vars2
-        st''' = addSymbol name (BoolExp (Boolean (False::Bool))) st''
-    in 
-        (st''', stmts)
-
-setFScope (RType_None pg vars stmts) exprs st name =
-    let
-        st' = foldl evalVarDec st vars -- add variable declarations
-        vars2 = zipWith matchParam pg exprs
-        st'' = foldl evalVarDec st' vars2
-    in 
-        (st'', stmts)
-
-matchParam :: String -> GenExp -> VarDec
-matchParam p v = (Init p v)
 

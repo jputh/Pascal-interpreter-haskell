@@ -36,8 +36,11 @@ data RExp =
     | OpEq String RExp
     -- real value: e.g. Real 1.0
     | Real Float
+    -- function call
+    | RFuncCall String [Val]
     -- variable: e.g. Var "x"
     | Var_R String
+    
     deriving (Show, Eq)
 
 -- Data-structure for boolean expressions
@@ -59,10 +62,10 @@ data Statement =
     -- TODO: add other statements
     -- Variable assignment
     Assign String Val
+    -- function call
+    | FuncCall String String [Val]
     -- procedure call
     | ProcCall String [Val]
-    -- function call: FunctionCall name ListArguments
-    | FuncCall String String [Val] 
     -- writeln statement
     | Writeln [Val]
     -- If statement

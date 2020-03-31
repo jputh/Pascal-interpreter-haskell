@@ -27,7 +27,6 @@ executable Pascal
                      , Pascal.Wrapper
                      , Pascal.EvalStatement
                      , Pascal.EvalRExp
-                     , Pascal.EvalBExp
                      , Pascal.EvalVal
                      , Pascal.Scope
   -- other-extensions:    

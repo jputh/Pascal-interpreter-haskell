@@ -5,7 +5,7 @@ module Pascal.Interpret
 where
 
 import Pascal.Data
-import Pascal.EvalVarFunc
+import Pascal.EvalRExp
 import Pascal.EvalStatement
 import qualified Data.Map.Strict as M
 
@@ -20,6 +20,7 @@ import qualified Data.Map.Strict as M
 
 mySymbTab :: SymTab
 mySymbTab = M.empty
+
 
 myFuncTab :: FuncTab
 myFuncTab = M.empty
@@ -40,9 +41,9 @@ interpret ((vars, funcs), stmts) =
         
         ft = foldl addFunc myFuncTab funcs -- create function table
         
-        st = foldl evalVarDec mySymbTab vars -- create symbol table
+        ((tempStr, st:tail), tempFt) = foldl evalVarDec (("", (mySymbTab:[])), ft) vars -- create symbol table
         
-        ((str', st'), ft') = foldl evalStatementOut ((""  ++ (show st) ++ "     ^^^^^^     " ++ (show ft) ++ "   ", (st:[])), ft) stmts
+        ((str', st'), ft') = foldl evalStatementOut (("" ++  "      ", (st:[])), ft) stmts
     in
         str'
 
