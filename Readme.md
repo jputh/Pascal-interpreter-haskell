@@ -1,24 +1,26 @@
 # README
 
 Project by: Jason Puthusseril
-
 Date: 3-30-2020
+
+## About
+
+To get acquainted with functional programming and with the world of interpreters and compilers, I used Haskell to build this interpreter for the Pascal programming language. The interpreter uses Alex for lexical analysis and Happy as a parser generator.
+
+
+
 
 ## How to run the code
 
-To run the tests, navigate to the Project directory and do:
+* To run the tests, navigate to the Project directory and do the following for tests t1.pas through t12.pas:
 ```bash
 cabal run Pascal tests/t1.pas
 ```
-for tests t1.pas through t12.pas
 
-
-To run the unit tests, navigate to the src directory and do:
-
+* To run the unit tests, navigate to the src directory and do the following for the these spec files: EvalBExpSpec.hs, EvalRExpSpec.hs, AuxilarySpec.hs:
 ```bash
 runhaskell Spec/EvalBExpSpec.hs
 ```
-for the following spec files: EvalBExpSpec.hs, EvalRExpSpec.hs, AuxilarySpec.hs
 
 
 
@@ -26,16 +28,11 @@ for the following spec files: EvalBExpSpec.hs, EvalRExpSpec.hs, AuxilarySpec.hs
 
 The following features have been implemented, including:
 
-1. while-do and for-do loops 
-
-2. user-defined functions and procedures
-
-3. static scoping
+* while-do and for-do loops 
+* user-defined functions and procedures
+* static scoping
     * see input12.pas and input13.pas (and any test involving functions/procedures)
 
-## Bonuses
-
-I also attempted the second bonus from the Project 2, formal parameters passing with proper scoping
 
 
 ## Assumptions
